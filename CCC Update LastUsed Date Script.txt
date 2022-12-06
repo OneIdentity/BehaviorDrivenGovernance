@@ -1,0 +1,197 @@
+#If Not SCRIPTDEBUGGER Then
+	Imports System.Collections.Generic
+#End If
+
+        '--> For each entry in OLGUserHasOLGApplication find an Event of type 8 (Log In)
+        '--> with the same user id and application id and the highest CreatedAt date.
+        '--> Update OLGUserHasOLGApplication.CCC_LastUsedDate with that date if different from existing.
+
+        Public Sub CCC_Set_LastLogged_Into_Application()
+
+            Dim dicLastLogins = CCC_Get_LastLogged_Into_Application()
+
+
+            ProcessOLGUserHasOLGApp(dicLastLogins)
+            ProcessPersonHasEset(dicLastLogins)
+
+        End Sub
+
+        Private Sub ProcessPersonHasEset(ByVal dicLastLogins As UserEventDate)
+
+            Dim strKey, uidUser, uidEset As String
+            Dim lastUsed As DateTime
+            Dim colPersonHasESet As IEntityCollection
+            Dim f As ISqlFormatter = Connection.SqlFormatter
+
+            ' Create collection of OLGUserHasOLGApplication objects. All user/application membership records.
+            Dim qAccounts = Query.From("PersonHasESet").SelectAll()
+
+            colPersonHasESet = Session.Source.GetCollection(qAccounts, EntityCollectionLoadType.Bulk)
+
+            Using uow = Session.StartUnitOfWork()
+
+                ' Walk through the list of all ser/application membership
+
+                For Each item As IEntity In colPersonHasESet
+
+                    uidUser = item.GetValue("UID_Person").String
+                    uidEset = item.GetValue("UID_Eset").String
+                    strKey = String.Format(uidUser + "|" + uidEset)
+                    lastUsed = item.GetValue("CCC_LastUsedDate").Date
+
+                    '--> Check if there is an event for this user and application.
+                    '--> If there is - check if that event's date is different from the value in the OLGUserHasOLGApplication.CCC_LastUsedDate field
+                    If dicLastLogins.PersonHasEsets.ContainsKey(strKey) Then
+                        'If dicLastLogins(strKey).Item1 = uidApp Then
+                        If CDate(dicLastLogins.PersonHasEsets(strKey).DateLastUsed.ToUniversalTime()) <> lastUsed Then
+                            item.PutValue("CCC_LastUsedDate", dicLastLogins.PersonHasEsets(strKey).DateLastUsed)
+
+                            ' put the object in the unit of work
+                            uow.Put(item)
+
+                        End If
+                        'End If
+                    End If
+                Next
+
+                ' All objects will be saved here!
+                uow.Commit()
+            End Using
+        End Sub
+
+        Private Sub ProcessOLGUserHasOLGApp(ByVal dicLastLogins As UserEventDate)
+
+            Dim strKey, uidUser, uidApp As String
+            Dim lastUsed As DateTime
+            Dim colOLGUserHasOLGApplication As IEntityCollection
+            Dim f As ISqlFormatter = Connection.SqlFormatter
+
+            ' Create collection of OLGUserHasOLGApplication objects. All user/application membership records.
+            Dim qAccounts = Query.From("OLGUserHasOLGApplication").SelectAll()
+
+            colOLGUserHasOLGApplication = Session.Source.GetCollection(qAccounts, EntityCollectionLoadType.Bulk)
+
+            Using uow = Session.StartUnitOfWork()
+
+                ' Walk through the list of all ser/application membership
+
+                For Each item As IEntity In colOLGUserHasOLGApplication
+
+                    uidUser = item.GetValue("UID_OLGUser").String
+                    uidApp = item.GetValue("UID_OLGApplication").String
+                    strKey = String.Format(uidUser + "|" + uidApp)
+                    lastUsed = item.GetValue("CCC_LastUsedDate").Date
+
+                    '--> Check if there is an event for this user and application.
+                    '--> If there is - check if that event's date is different from the value in the OLGUserHasOLGApplication.CCC_LastUsedDate field
+                    If dicLastLogins.OLGEvents.ContainsKey(strKey) Then
+                        'If dicLastLogins(strKey).Item1 = uidApp Then
+                        If CDate(dicLastLogins.OLGEvents(strKey).DateLastUsed.ToUniversalTime()) <> lastUsed Then
+                            item.PutValue("CCC_LastUsedDate", dicLastLogins.OLGEvents(strKey).DateLastUsed)
+
+                            ' put the object in the unit of work
+                            uow.Put(item)
+
+                        End If
+                        'End If
+                    End If
+                Next
+
+                ' All objects will be saved here!
+                uow.Commit()
+            End Using
+        End Sub
+
+        '--> Get all Event records for event type = 8 (Log in)
+        '--> Combine them into Dictionary where Key is a user id and value is:
+        '--> tuple Of application id and Highest CreatedAt date 
+        Private Function CCC_Get_LastLogged_Into_Application() As UserEventDate 'Dictionary(Of String, OLGEvent)
+
+            Dim ret = New UserEventDate() 'Dictionary(Of String, OLGEvent)
+            ret.OLGEvents = New Dictionary(Of String, OLGEvent)()
+            ret.PersonHasEsets = New Dictionary(Of String, PersonHasEset)()
+
+            Try
+                Dim connData As ConnectData = DbApp.Instance.Connect(VID_GetValueOfDialogdatabases("ConnectionString"))
+                Dim sqlExec As SqlExecutor = connData.Connection.CreateSqlExecutor(connData.PublicKey)
+
+                ' Person count
+                Dim query As String = ""
+
+                query = "Select evtime.UID_OLGUser, evtime.UID_OLGApplication, pe.UID_Person, est.UID_ESet, evtime.CreatedAt " +
+                        "from(select UID_OLGUser, UID_OLGApplication, Max(CreatedAt) as CreatedAt " +
+                        "        From OLGEvent " +
+                        "        Where EventTypeId = 8 " +
+                        "        Group By UID_OLGUser, UID_OLGApplication ) as evtime " +
+                        "Join OLGUser ou on evtime.UID_OLGUser = ou.UID_OLGUser " +
+                        "Join OLGApplication oa on evtime.UID_OLGApplication = oa.UID_OLGApplication " +
+                        "Join OLGRoleApplication ora on ora.UID_OLGApplication = evtime.UID_OLGApplication " +
+                        "Join OLGRole olr on olr.UID_OLGRole = ora.UID_OLGRole " +
+                        "Join ESetHasEntitlement esent on esent.Entitlement = olr.XObjectKey  " +
+                        "Join PersonHasEset pe on pe.UID_ESet = esent.UID_ESet  " +
+                        "        And pe.UID_Person = ou.UID_Person " +
+                        "Join Person p on p.UID_Person = ou.UID_Person " +
+                        "Join ESet est on pe.UID_ESet = est.UID_ESet " +
+                        "Where ora.XMarkedForDeletion = 0 And olr.DisplayName like '% App' "
+
+                Using reader As IDataReader = sqlExec.SqlExecute(query)
+
+                    While reader.Read()
+                        '--> UserId|ApplicationId
+                        ret.OLGEvents.Add(reader.GetString(0) + "|" + reader.GetString(1),
+                                 New OLGEvent With {
+                                                .UserId = reader.GetString(0),
+                                                .ApplicationId = reader.GetString(1),
+                                                .DateLastUsed = CDate(reader.GetString(4))
+                                               }
+                                )
+
+                        ret.PersonHasEsets.Add(reader.GetString(2) + "|" + reader.GetString(3),
+                                 New PersonHasEset With {
+                                                .UserId = reader.GetString(2),
+                                                .EsetId = reader.GetString(3),
+                                                .DateLastUsed = CDate(reader.GetString(4))
+                                               }
+                                )
+                    End While
+
+                End Using
+
+                '' Application role members count
+                'query = "select UID_OLGUser, UID_OLGApplication, Max(CreatedAt) " +
+                '        "from OLGEvent " +
+                '        "Where EventTypeId = 8 " +
+                '        "Group By UID_OLGUser, UID_OLGApplication "
+
+
+
+
+            Catch DBEx As Exception
+                Throw New Exception("Error in CCC_Get_LastLogged_Into_Application: " + DBEx.Message)
+            End Try
+
+            Return ret
+        End Function
+
+        Public Class UserEventDate
+            Public OLGEvents As Dictionary(Of String, OLGEvent)
+            Public PersonHasEsets As Dictionary(Of String, PersonHasEset)
+        End Class
+
+        Public Class PersonHasEset
+            Public UserId As String
+            Public EsetId As String
+            Public DateLastUsed As DateTime
+        End Class
+
+        Public Class OLGEvent
+            Public UserId As String
+            Public ApplicationId As String
+            Public DateLastUsed As DateTime
+        End Class
+
+
+
+
+
+    
