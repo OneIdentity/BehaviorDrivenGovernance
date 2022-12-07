@@ -16,7 +16,7 @@ This video includes a high level overview of this feature: Behavior Driven Gover
 [![Demo video](https://img.youtube.com/vi/tLmQK-zQmV8/0.jpg)](https://www.youtube.com/watch?v=tLmQK-zQmV8)
 
 ## Extending and Populating Tables
-This solution extends the two tables OLGUserHasOLGApplication and PersonHasESet to include a CCC_LastUsedDate column. Then a script runs after the OneLogin synchronization has completed, which will update this CCC_LastUsedDate column for the user/application combination in the OLGUserHasOLGApplication, as well as the same column in the PersonHasESet column for any system role that contains the OneLogin application and is assigned to the affected user.
+This solution extends the two tables `OLGUserHasOLGApplication` and `PersonHasESet` to include a `CCC_LastUsedDate` column. Then a script runs after the OneLogin synchronization has completed, which will update this `CCC_LastUsedDate` column for the user/application combination in the `OLGUserHasOLGApplication`, as well as the same column in the `PersonHasESet` column for any system role that contains the OneLogin application and is assigned to the affected user.
 
 ## Post-Synchronization Script
 Whenever Identity Manager completes a synchronization of the OneLogin system attached, a script is run to go find any updates in the OneLogin event log and match them by user ID and app ID to do the following:
