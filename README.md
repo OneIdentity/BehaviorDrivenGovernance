@@ -19,8 +19,8 @@ Find any OneLogin Role (not the same as an Identity Manager role) that includes 
 Config Parameters
 Several configuration parameters are used by the script to do its updates.
 
-Custom
-OneLogin
+## Custom
+### OneLogin Events
 Events
 ClientID - the client ID of the API creds for OneLogin
 ClientSecret - the client secret of the API creds for OneLogin
@@ -29,49 +29,49 @@ DaysToRetrieve - how many days of history to get with each call. This should be 
 Governance Policies
 A series of policies, and attestations are recommended that will ensure the governance of the OneLogin application assignment is effective, and samples are provided as recommendations on how to use this functionality.
 
-Attestation with Recommendation
+### Attestation with Recommendation
 An attestation can be run on a schedule, say every month, to approve keeping access for applications not used in 90 days. Note: what we are attesting in this campaign is the System Role Membership, not the app assignment itself.
 
-Company Policy
+### Company Policy
 A policy uses the same query to deliver an exception report for users who have not used an application it the past 90 days. It triggers on the PersonHasEset.CCC_LastUsedDate.
 
-Deployment and Configuration
+### Deployment and Configuration
 Import Transport Files in Identity Manager
 The following transport files should be imported in order, first '1 Transport - Schema' and then '2 Transport - Process & Script' (links below). Use the Database Transporter tool to import these transports.
 
-Transport files
+### Transport files
 1 Transport - Schema
 2 Transport - Process & Script
 
 This will do the necessary schema extensions to the PersonHasESet and OLGUserHasOLGApplication tables, and also deploy the script and add the extra config parameters. For reference, the script and custom process are attached:
 
-Process
+### Process
 CCC_Update_LastUsed_Date_Process.xml
 
-Script
+### Script
 CCC_Update_LastUsed_Date_Script.txt
 
-OneLogin Sync Project -- Optional and Recommended Settings
+### OneLogin Sync Project -- Optional and Recommended Settings
 Some optional settings changes are recommended for your OneLogin synchronization project. Perform these changes in the Synchronization Editor tool. Open your OneLogin sync project to perform these changes.
 
 Important: It is required to use the 9.0.0 or later OneLogin connector in Identity Manager for this feature to work. If you are using the Starling Connect connector, you will first have to build a new connection to OneLogin and transition to the new connector.
 
-Optional: Disable Event Workflow Step
+### Optional: Disable Event Workflow Step
 The Events workflow in the OneLogin connector is enabled by default. The intent is to synchronize the event log from OneLogin into Identity Manager in order to enable OneLogin event driven actions. Depending on your deployment, there is a potential of exceeding the OneLogin API rate limit if you synchronize the OneLogin event log. This solution accelerator uses a script to collect the targeted event data, so synchronizing the OneLogin event log may be unnecessary.
 
 In the Synchronization Editor, navigate to Workflows, choose Initial Synchronization workflow, and edit the Event step. Check the box for "Disabled" in the General tab.
 
-Recommended: Scheduled Synchronization of OneLogin
+### Recommended: Scheduled Synchronization of OneLogin
 Since the behavior-driven governance feature is triggered by the synchronization of your OneLogin tenant, it is recommended to synchronize your OneLogin data on a regular schedule. Enable the scheduled synchronization in the Synchronization Editor.
 
 OneLogin has an hourly API rate limit imposed for most deployments. For this reason, the most efficient synchronization schedule for OneLogin is to do the sync hourly, which will result in evenly distributing the number of API calls to optimize the rate limit.
 
 In the Synchronization Editor, navigate to Configuration > Start up configurations, and select click Edit Schedule... under the "Initial Synchronization". In the dialog, be sure and check the "Enabled" checkbox, and set the desired schedule, such as hourly. Alternately, you can create a new start up configuration to perform your hourly updates. See the Identity Manager documentation for more information on creating a new start up configuration.
 
-Governing OneLogin Applications With Identity Manager
+### Governing OneLogin Applications With Identity Manager
 Following are recommended conventions and application assignment architecture to make governing applications in OneLogin easy and effective. These recommendations are not required for the solution accelerator to function, but are best practices that should be considered.
 
-Naming Convention
+### Naming Convention
 It is recommended to utilize a naming convention and assignment architecture for provisioning and deprovisioning of access in OneLogin and target systems of associated applications. The following is an example, and will be used in the queries and policies referenced later in this document.
 
 Identity Manager System Role - "Salesforce Access"
@@ -86,7 +86,7 @@ Microsoft 365	Microsoft 365 App	Microsoft 365 Access
 Policies & Attestation
 Create the following policies and attestation policy to govern your users' OneLogin applications based on their behavior.
 
-Company Policy: App Governance for OneLogin Roles
+### Company Policy: App Governance for OneLogin Roles
 Create a Company Policy: App Governance for OneLogin Roles. Use the following sql for the condition:
 
    UID_OLGRole in (
@@ -101,7 +101,7 @@ Create a Company Policy: App Governance for OneLogin Roles. Use the following sq
       OR orl.DisplayName not like (oa.DisplayName + '% App')
       OR oa.ProvisioningEnabled = 1
    )
-Company Policy: App Governance for OneLogin Applications
+### Company Policy: App Governance for OneLogin Applications
 Create a Company Policy App Governance for OneLogin Applications. Use the following condition:
 
 UID_OLGApplication in (
@@ -118,7 +118,7 @@ UID_OLGApplication in (
           OR oa.ProvisioningEnabled = 1
         )
 )
-Company Policy: Applications not used in 90 days
+### Company Policy: Applications not used in 90 days
 Create a Company Policy: Applications not used in 90 days. Use the following condition:
 
 CCC_LastUsedDate is not null
