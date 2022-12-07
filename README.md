@@ -53,10 +53,10 @@ The following transport files should be imported in order, first '1 Transport - 
 This will do the necessary schema extensions to the PersonHasESet and OLGUserHasOLGApplication tables, and also deploy the script and add the extra config parameters. For reference, the script and custom process are attached:
 
 ### Process
-CCC_Update_LastUsed_Date_Process.xml
+[CCC Update LastUsed Date Process.xml](CCC%20Update%20LastUsed%20Date%20Process.xml)
 
 ### Script
-CCC_Update_LastUsed_Date_Script.txt
+[CCC Update LastUsed Date Script.txt](CCC%20Update%20LastUsed%20Date%20Script.txt)
 
 ### OneLogin Sync Project -- Optional and Recommended Settings
 Some optional settings changes are recommended for your OneLogin synchronization project. Perform these changes in the Synchronization Editor tool. Open your OneLogin sync project to perform these changes.
