@@ -8,6 +8,9 @@ This video includes a high level overview of this feature: Behavior Driven Gover
 ## Basic Functionality
 With Identity Manager 9.0, a new OneLogin connector is provided, which includes a number of special OneLogin "OLG*" tables in Identity Manager. This solution accelerator uses the OLGUserHasOLGApplication table. In addition, this solution includes the ability to use System Roles in Identity Manager to assign application access in OneLogin along with other access such as target system accounts and entitlements. The table used for this is the PersonHasESet table.
 
+## Link to demonstration video
+DAN -- YOUTUBE VIDEO HERE
+
 ## Extending and Populating Tables
 This solution extends the two tables OLGUserHasOLGApplication and PersonHasESet to include a CCC_LastUsedDate column. Then a script runs after the OneLogin synchronization has completed, which will update this CCC_LastUsedDate column for the user/application combination in the OLGUserHasOLGApplication, as well as the same column in the PersonHasESet column for any system role that contains the OneLogin application and is assigned to the affected user.
 
