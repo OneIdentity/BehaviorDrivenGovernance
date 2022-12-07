@@ -1,5 +1,6 @@
 # Behavior Driven Governance
-Identity Manager & OneLogin Solution Accelerator
+__Identity Manager__ & __OneLogin__ Solution Accelerator
+
 ## Overview
 This solution accelerator allows you to reduce standing privilege and license cost by evaluating event data from OneLogin to inform Identity Manager of whether a user has used an application on their OneLogin launchpad in a specified period of time, such as 90 days. Then an attestation can be run which will provide a recommendation that the user's manager should revoke the applications which are unused in this time period. As an alternate application of this functionality, rather than an attestation with recommendation, it could be automatically revoked, thus reducing certification fatigue.
 
@@ -96,55 +97,62 @@ Create the following policies and attestation policy to govern your users' OneLo
 
 ### Company Policy: App Governance for OneLogin Roles
 Create a Company Policy: App Governance for OneLogin Roles. Use the following sql for the condition:
-
-   UID_OLGRole in (
-
-      select orl.UID_OLGRole  --, orl.DisplayName as RoleName, oa.DisplayName as AppName
-      from OLGRoleApplication orla 
-      join OLGRole orl on orla.UID_OLGRole = orl.UID_OLGRole
-      join OLGApplication oa on orla.UID_OLGApplication = oa.UID_OLGApplication
-      Where 1=1
-      And orl.DisplayName like ('% App')
-      And   (Select count(*) from OLGRoleApplication ora where ora.UID_OLGRole = orl.UID_OLGRole) > 1
-      OR orl.DisplayName not like (oa.DisplayName + '% App')
-      OR oa.ProvisioningEnabled = 1
-   )
-### Company Policy: App Governance for OneLogin Applications
-Create a Company Policy App Governance for OneLogin Applications. Use the following condition:
-
-UID_OLGApplication in (
-   select oa.UID_OLGApplication  --, orl.DisplayName as RoleName, oa.DisplayName as AppName
-   from OLGRoleApplication orla
+```
+UID_OLGRole in (
+   select orl.UID_OLGRole  --, orl.DisplayName as RoleName, oa.DisplayName as AppName
+   from OLGRoleApplication orla 
    join OLGRole orl on orla.UID_OLGRole = orl.UID_OLGRole
    join OLGApplication oa on orla.UID_OLGApplication = oa.UID_OLGApplication
    Where 1=1
-   AND orl.DisplayName like (oa.DisplayName + '% App')
-   AND  (
+   And orl.DisplayName like ('% App')
+   And   (Select count(*) from OLGRoleApplication ora where ora.UID_OLGRole = orl.UID_OLGRole) > 1
+   OR orl.DisplayName not like (oa.DisplayName + '% App')
+   OR oa.ProvisioningEnabled = 1
+)
+```
+
+### Company Policy: App Governance for OneLogin Applications
+Create a Company Policy App Governance for OneLogin Applications. Use the following condition:
+```
+   UID_OLGApplication in (
+      select oa.UID_OLGApplication  --, orl.DisplayName as RoleName, oa.DisplayName as AppName
+      from OLGRoleApplication orla
+      join OLGRole orl on orla.UID_OLGRole = orl.UID_OLGRole
+      join OLGApplication oa on orla.UID_OLGApplication = oa.UID_OLGApplication
+      Where 1=1
+      AND orl.DisplayName like (oa.DisplayName + '% App')
+      AND  (
           (Select count(*) 
           From OLGRoleApplication ora2 
           Where ora2.UID_OLGApplication = oa.UID_OLGApplication ) > 1
           OR oa.ProvisioningEnabled = 1
-        )
-)
+      )
+   )
+```
+
 ### Company Policy: Applications not used in 90 days
 Create a Company Policy: Applications not used in 90 days. Use the following condition:
-
+```
 CCC_LastUsedDate is not null
 and
 CCC_LastUsedDate < DATEADD(day, -90, GetUTCDate())
-Attestation Policy: OneLogin Applications not used in 90 days
+```
+
+### Attestation Policy: OneLogin Applications not used in 90 days
 Create an Attestation Policy to govern OneLogin applications and other entitlements or accounts based on user behavior. It is recommended to run this policy on a monthly basis. Choose whichever approval workflow and policy that conforms to your company's governance framework.
 
 The key to the policy is in the condition:
-
+```
 CCC_LastUsedDate is not null
 and
 CCC_LastUsedDate < DATEADD(day, -90, GetUTCDate())
-OneLogin Configuration
+```
+
+### OneLogin Configuration
 Identity Manager governs application assignments into OneLogin users' dashboards through OneLogin Roles. In order to correctly govern these applications, a specific configuration needs to be employed.
 For each app which you intend to govern, you must follow these rules:
+- On OneLogin, a role is configured for each application you want to govern, which follows the naming convention above: Some Application App
+- Any OneLogin application you would like to govern must only be added to one role, which follows the naming convention as above
+- Provisioning is disabled for any application to be governed
 
-On OneLogin, a role is configured for each application you want to govern, which follows the naming convention above: Some Application App
-Any OneLogin application you would like to govern must only be added to one role, which follows the naming convention as above
-Provisioning is disabled for any application to be governed
 The company policies are provided with this solution accelerator that will aid in detecting violations of these rules.
