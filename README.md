@@ -14,7 +14,7 @@ With Identity Manager 9.0, a new OneLogin connector is provided, which includes 
 ## Link to demonstration video
 [Demo video](https://www.youtube.com/watch?v=tLmQK-zQmV8&t=7s)
 
-[![Demo video](https://img.youtube.com/watch?v=tLmQK-zQmV8&t=7s/0.jpg)](https://www.youtube.com/watch?v=tLmQK-zQmV8&t=7s)
+[![Demo video](https://img.youtube.com/vi/tLmQK-zQmV8/0.jpg)](https://www.youtube.com/watch?v=tLmQK-zQmV8&t=7s)
 
 ## Extending and Populating Tables
 This solution extends the two tables OLGUserHasOLGApplication and PersonHasESet to include a CCC_LastUsedDate column. Then a script runs after the OneLogin synchronization has completed, which will update this CCC_LastUsedDate column for the user/application combination in the OLGUserHasOLGApplication, as well as the same column in the PersonHasESet column for any system role that contains the OneLogin application and is assigned to the affected user.
