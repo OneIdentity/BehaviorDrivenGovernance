@@ -5,6 +5,9 @@ This solution accelerator allows you to reduce standing privilege and license co
 
 This video includes a high level overview of this feature: Behavior Driven Governance 
 
+## Supportability
+This Solution Accelerator is delivered "as is".  Any issues encountered can be reported on Github and contributors will make a best effort to resolve them.
+
 ## Basic Functionality
 With Identity Manager 9.0, a new OneLogin connector is provided, which includes a number of special OneLogin "OLG*" tables in Identity Manager. This solution accelerator uses the OLGUserHasOLGApplication table. In addition, this solution includes the ability to use System Roles in Identity Manager to assign application access in OneLogin along with other access such as target system accounts and entitlements. The table used for this is the PersonHasESet table.
 
