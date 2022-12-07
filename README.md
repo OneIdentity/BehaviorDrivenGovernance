@@ -4,8 +4,6 @@ __Identity Manager__ & __OneLogin__ Solution Accelerator
 ## Overview
 This solution accelerator allows you to reduce standing privilege and license cost by evaluating event data from OneLogin to inform Identity Manager of whether a user has used an application on their OneLogin launchpad in a specified period of time, such as 90 days. Then an attestation can be run which will provide a recommendation that the user's manager should revoke the applications which are unused in this time period. As an alternate application of this functionality, rather than an attestation with recommendation, it could be automatically revoked, thus reducing certification fatigue.
 
-This video includes a high level overview of this feature: Behavior Driven Governance 
-
 ## Supportability
 This Solution Accelerator is delivered "as is".  Any issues encountered can be reported on Github and contributors will make a best effort to resolve them.
 
@@ -13,7 +11,7 @@ This Solution Accelerator is delivered "as is".  Any issues encountered can be r
 With Identity Manager 9.0, a new OneLogin connector is provided, which includes a number of special OneLogin "OLG*" tables in Identity Manager. This solution accelerator uses the OLGUserHasOLGApplication table. In addition, this solution includes the ability to use System Roles in Identity Manager to assign application access in OneLogin along with other access such as target system accounts and entitlements. The table used for this is the PersonHasESet table.
 
 ## Link to demonstration video
-[Demo video](https://www.youtube.com/watch?v=tLmQK-zQmV8)
+This video includes a high level overview of this feature: Behavior Driven Governance [Demo video](https://www.youtube.com/watch?v=tLmQK-zQmV8)
 
 [![Demo video](https://img.youtube.com/vi/tLmQK-zQmV8/0.jpg)](https://www.youtube.com/watch?v=tLmQK-zQmV8)
 
