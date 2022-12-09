@@ -81,17 +81,18 @@ Following are recommended conventions and application assignment architecture to
 
 ### Naming Convention
 It is recommended to utilize a naming convention and assignment architecture for provisioning and deprovisioning of access in OneLogin and target systems of associated applications. The following is an example, and will be used in the queries and policies referenced later in this document.
-```
-Identity Manager System Role - "Salesforce Access"
-OneLogin Role - "Salesforce App"
-OneLogin Application - "Salesforce"
-Target System Account Definition - "Salesforce Account"
-Target System entitlements - as needed
-Application	OneLogin Role	Identity Manager System Role
-Salesforce	Salesforce App	Salesforce Access
-Concur	Concur App	Concur Access
-Microsoft 365	Microsoft 365 App	Microsoft 365 Access
-```
+
+- Identity Manager System Role - "Salesforce Access"
+  - OneLogin Role - "Salesforce App"
+    - OneLogin Application - "Salesforce"
+  - Target System Account Definition - "Salesforce Account"
+  - Target System entitlements - as needed
+
+| Application | OneLogin Role | Identity Manager System Role |
+| :--- | :--- | :--- |
+| Salesforce |Salesforce App | Salesforce Access |
+| Concur | Concur App | Concur Access |
+| Microsoft 365 | Microsoft 365 App | Microsoft 365 Access |
 
 ### Policies & Attestation
 Create the following policies and attestation policy to govern your users' OneLogin applications based on their behavior.
