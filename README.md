@@ -48,8 +48,8 @@ Import Transport Files in Identity Manager
 The following transport files should be imported in order, first '1 Transport - Schema' and then '2 Transport - Process & Script' (links below). Use the Database Transporter tool to import these transports.
 
 ### Transport files
-- 1 Transport - Schema
-- 2 Transport - Process & Script
+- [1 Transport - Schema](https://github.com/OneIdentity/BehaviorDrivenGovernance/raw/main/1%20Transport_OneIM_v821_OneLogin_LastUsedDate_Schema.zip)
+- [2 Transport - Process & Script](https://github.com/OneIdentity/BehaviorDrivenGovernance/raw/main/2%20Transport_OneIM_OneLogin_LastUsedDate.zip)
 
 This will do the necessary schema extensions to the `PersonHasESet` and `OLGUserHasOLGApplication` tables, and also deploy the script and add the extra config parameters. For reference, the script and custom process are attached:
 
