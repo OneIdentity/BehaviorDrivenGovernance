@@ -26,28 +26,28 @@ Whenever Identity Manager completes a synchronization of the OneLogin system att
 ## Config Parameters
 Several configuration parameters are used by the script to do its updates.
 
-## Custom
-### OneLogin Events
-Events
-- ClientID - the client ID of the API creds for OneLogin
-- ClientSecret - the client secret of the API creds for OneLogin
-- BaseURL - the URL of your OneLogin tenant
-- DaysToRetrieve - how many days of history to get with each call. This should be less frequent than your OneLogin synchronization, in order to ensure there is no gap in coverage.
+- Custom
+  - OneLogin Events
+    - Events
+      - ClientID - the client ID of the API creds for OneLogin
+      - ClientSecret - the client secret of the API creds for OneLogin
+      - BaseURL - the URL of your OneLogin tenant
+      - DaysToRetrieve - how many days of history to get with each call. This should be less frequent than your OneLogin synchronization, in order to ensure there is no gap in coverage.
 
-### Governance Policies
+## Governance Policies
 A series of policies, and attestations are recommended that will ensure the governance of the OneLogin application assignment is effective, and samples are provided as recommendations on how to use this functionality.
 
-#### Attestation with Recommendation
+### Attestation with Recommendation
 An attestation can be run on a schedule, say every month, to approve keeping access for applications not used in 90 days. Note: what we are attesting in this campaign is the System Role Membership, not the app assignment itself.
 
-#### Company Policy
+### Company Policy
 A policy uses the same query to deliver an exception report for users who have not used an application it the past 90 days. It triggers on the PersonHasEset.CCC_LastUsedDate.
 
-#### Deployment and Configuration
+### Deployment and Configuration
 Import Transport Files in Identity Manager
 The following transport files should be imported in order, first '1 Transport - Schema' and then '2 Transport - Process & Script' (links below). Use the Database Transporter tool to import these transports.
 
-#### Transport files
+### Transport files
 - 1 Transport - Schema
 - 2 Transport - Process & Script
 
