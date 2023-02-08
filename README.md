@@ -8,7 +8,7 @@ This solution accelerator allows you to reduce standing privilege and license co
 This Solution Accelerator is delivered "as is".  Any issues encountered can be reported on Github and contributors will make a best effort to resolve them.
 
 ## Basic Functionality
-With Identity Manager 9.0, a new OneLogin connector is provided, which includes a number of special OneLogin `OLG*` tables in Identity Manager. This solution accelerator uses the `OLGUserHasOLGApplication` table. In addition, this solution includes the ability to use System Roles in Identity Manager to assign application access in OneLogin along with other access such as target system accounts and entitlements. The table used for this is the PersonHasESet table.
+With Identity Manager 9.0, a new OneLogin connector is provided, which includes a number of special OneLogin `OLG*` tables in Identity Manager.  The Behavior Driven Governance solution accelerator integrates Identity Manager and OneLogin to provide full visibility into which entitlements are being used and recommend removal of unused ones to minimize vulnerabilities.  This solution accelerator uses the `OLGUserHasOLGApplication` table. In addition, this solution includes the ability to use System Roles in Identity Manager to assign application access in OneLogin along with other access such as target system accounts and entitlements. The table used for this is the PersonHasESet table.
 
 ## Link to demonstration video
 This video includes a high level overview of this feature: Behavior Driven Governance
@@ -38,20 +38,20 @@ Several configuration parameters are used by the script to do its updates.
 A series of policies, and attestations are recommended that will ensure the governance of the OneLogin application assignment is effective, and samples are provided as recommendations on how to use this functionality.
 
 ### Attestation with Recommendation
-An attestation can be run on a schedule, say every month, to approve keeping access for applications not used in 90 days. Note: what we are attesting in this campaign is the System Role Membership, not the app assignment itself.
+An attestation can be run on a predetermined schedule, say every month, to approve users to keep access for applications not used in 90 days. Note: What we are attesting in this process is the System Role Membership, not the app assignment itself.
 
 ### Company Policy
 A policy uses the same query to deliver an exception report for users who have not used an application it the past 90 days. It triggers on the PersonHasEset.CCC_LastUsedDate.
 
 ### Deployment and Configuration
 Import Transport Files in Identity Manager
-The following transport files should be imported in order, first '1 Transport - Schema' and then '2 Transport - Process & Script' (links below). Use the Database Transporter tool to import these transports.
+The following transport files should be imported in order, First '1 Transport - Schema' and then '2 Transport - Process & Script' (links below). Use the Database Transporter tool to import these transports.
 
 ### Transport files
 - [1 Transport - Schema](https://github.com/OneIdentity/BehaviorDrivenGovernance/raw/main/1%20Transport_OneIM_v821_OneLogin_LastUsedDate_Schema.zip)
 - [2 Transport - Process & Script](https://github.com/OneIdentity/BehaviorDrivenGovernance/raw/main/2%20Transport_OneIM_OneLogin_LastUsedDate.zip)
 
-This will do the necessary schema extensions to the `PersonHasESet` and `OLGUserHasOLGApplication` tables, and also deploy the script and add the extra config parameters. For reference, the script and custom process are attached:
+This will do the necessary schema extensions to the `PersonHasESet` and `OLGUserHasOLGApplication` tables.  It will also deploy the script and add the extra config parameters. For reference, the script and custom process are attached:
 
 ### Process
 [CCC Update LastUsed Date Process.xml](CCC%20Update%20LastUsed%20Date%20Process.xml)
@@ -67,20 +67,20 @@ __Important:__ *It is required to use the 9.0.0 or later OneLogin connector in I
 ### Optional: Disable Event Workflow Step
 The Events workflow in the OneLogin connector is enabled by default. The intent is to synchronize the event log from OneLogin into Identity Manager in order to enable OneLogin event driven actions. Depending on your deployment, there is a potential of exceeding the OneLogin API rate limit if you synchronize the OneLogin event log. This solution accelerator uses a script to collect the targeted event data, so synchronizing the OneLogin event log may be unnecessary.
 
-In the Synchronization Editor, navigate to Workflows, choose Initial Synchronization workflow, and edit the Event step. Check the box for `Disabled` in the `General` tab.
+In the Synchronization Editor, navigate to Workflows, choose Initial Synchronization workflow, and edit the Event step. Check the `Disabled` box in the `General` tab.
 
 ### Recommended: Scheduled Synchronization of OneLogin
-Since the behavior-driven governance feature is triggered by the synchronization of your OneLogin tenant, it is recommended to synchronize your OneLogin data on a regular schedule. Enable the scheduled synchronization in the Synchronization Editor.
+Since the behavior-driven governance capability is triggered by the synchronization of your OneLogin tenant, it is recommended to synchronize your OneLogin data on a regular schedule. Enable the scheduled synchronization in the Synchronization Editor.
 
 OneLogin has an hourly API rate limit imposed for most deployments. For this reason, the most efficient synchronization schedule for OneLogin is to do the sync hourly, which will result in evenly distributing the number of API calls to optimize the rate limit.
 
-In the Synchronization Editor, navigate to `Configuration` > `Start up configurations`, and select click `Edit Schedule...` under the `Initial Synchronization`. In the dialog, be sure and check the `Enabled` checkbox, and set the desired schedule, such as hourly. Alternately, you can create a new start up configuration to perform your hourly updates. See the Identity Manager documentation for more information on creating a new start up configuration.
+In the Synchronization Editor, navigate to `Configuration` > `Start up configurations`, and select `Edit Schedule...` under the `Initial Synchronization`. In the dialog, be sure to check the `Enabled` checkbox, and set the desired schedule, such as hourly. Alternately, you can create a new start up configuration to perform your hourly updates. See the Identity Manager documentation for more information on creating a new start up configuration.
 
-### Governing OneLogin Applications With Identity Manager
-Following are recommended conventions and application assignment architecture to make governing applications in OneLogin easy and effective. These recommendations are not required for the solution accelerator to function, but are best practices that should be considered.
+### Governing OneLogin Applications with Identity Manager
+Following are recommended conventions and application assignment architecture to make governing applications in OneLogin easy and effective. These recommendations are not required for the Behavior Driven Governance solution accelerator to function, but are best practices that should be considered.
 
 ### Naming Convention
-It is recommended to utilize a naming convention and assignment architecture for provisioning and deprovisioning of access in OneLogin and target systems of associated applications. The following is an example, and will be used in the queries and policies referenced later in this document.
+It is recommended to utilize a naming convention and assignment architecture for provisioning and deprovisioning access in OneLogin and target systems of associated applications. The following is an example, and will be used in the queries and policies referenced later in this document.
 
 - Identity Manager System Role - "Salesforce Access"
   - OneLogin Role - "Salesforce App"
@@ -98,7 +98,7 @@ It is recommended to utilize a naming convention and assignment architecture for
 Create the following policies and attestation policy to govern your users' OneLogin applications based on their behavior.
 
 ### Company Policy: App Governance for OneLogin Roles
-Create a Company Policy: App Governance for OneLogin Roles. Use the following sql for the condition:
+Create a Company Policy: App Governance for OneLogin Roles. Use the following SQL for the condition:
 ```
 UID_OLGRole in (
    select orl.UID_OLGRole  --, orl.DisplayName as RoleName, oa.DisplayName as AppName
