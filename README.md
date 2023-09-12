@@ -1,6 +1,8 @@
 # Behavior Driven Governance
 __Identity Manager__ & __OneLogin__ Solution Accelerator
 
+## --->  This feature is now included in One Identity Manager  <---
+
 ## Overview
 This solution accelerator allows you to reduce standing privilege and license cost by evaluating event data from OneLogin to inform Identity Manager of whether a user has used an application on their OneLogin launchpad in a specified period of time, such as 90 days. Then an attestation can be run which will provide a recommendation that the user's manager should revoke the applications which are unused in this time period. As an alternate application of this functionality, rather than an attestation with recommendation, it could be automatically revoked, thus reducing certification fatigue.
 
